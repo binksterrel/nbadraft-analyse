@@ -1,8 +1,8 @@
 # Compte Rendu de Projet : Analyse de la Performance des Joueurs NBA
 
-**Auteur:** [Ton Nom]
+**Auteur:** Terrel NUENTSA
 **Date:** 14 novembre 2025
-**Outils:** Tableau Public (version macOS)
+**Outils:** Tableau 
 
 ---
 
