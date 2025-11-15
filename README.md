@@ -1,74 +1,70 @@
-# Compte Rendu de Projet : Analyse de la Performance des Joueurs NBA
+# Analyse NBA : Le Rang de Draft Prédit-il le Succès ?
 
-**Auteur:** Terrel NUENTSA
-**Date:** 14 novembre 2025
-**Outils:** Tableau 
+Ce dépôt contient l'analyse complète d'un jeu de données de joueurs NBA (`players.csv`).
 
----
+L'objectif était de déterminer la corrélation entre le rang de draft et la performance en carrière. L'analyse a révélé que cette corrélation est **24 fois plus forte dans l'ère moderne (R² = 22%)** que sur l'historique complet (R² = 0.9%).
 
-## 1. Objectif du Projet
-
-L'objectif de cette analyse était de déterminer si le rang de draft d'un joueur NBA est un prédicteur fiable de sa performance en carrière, mesurée par le total de points marqués (`career_PTS`).
-
-Le projet a couvert l'intégralité du cycle de vie de l'analyse de données : la définition d'un outil de travail (Tableau), le nettoyage de données brutes, l'exploration (EDA), la modélisation statistique et l'interprétation finale.
+**Compétences démontrées :** `Tableau Public`, `Analyse de Données`, `Nettoyage de Données (Data Cleaning)`, `EDA (Exploratory Data Analysis)`, `Data Visualization`, `Analyse de Régression`, `REGEX`
 
 ---
 
-## 2. Dataset
+## 🎯 Problématique
 
-* **Source :** `players.csv`
-* **Contenu :** Données biographiques et statistiques de 4 685 joueurs NBA.
-* **Période (brute) :** 1968 - 2018 (pour les années de draft).
+L'objectif initial de ce projet était de répondre à une question simple : **"Est-ce que les joueurs draftés haut (ex: choix 1, 2, 3) ont de meilleures carrières (en points) que les joueurs draftés plus bas ?"**
 
----
-
-## 3. Méthodologie d'Analyse
-
-Le projet a suivi une méthodologie rigoureuse en plusieurs étapes, directement dans Tableau Public.
-
-### 3.1. Nettoyage et Préparation des Données (Data Cleaning)
-
-Cette étape a été cruciale car les données brutes n'étaient pas exploitables. Plusieurs transformations ont été effectuées à l'aide de **Champs Calculés** :
-
-* **Taille (`height`) :** Conversion du format texte ("6-10") en une valeur numérique en centimètres (`Taille (cm)`) en utilisant les fonctions `SPLIT` et `INT`.
-* **Poids (`weight`) :** Conversion du format texte ("240lb") en valeur numérique (`Poids (Num)`) en utilisant la fonction `REPLACE`.
-* **Rang de Draft (`draft_pick`) :** Extraction du numéro de draft (ex: "25" à partir de "25th overall") en utilisant la fonction `REGEXP_EXTRACT` (Expressions Régulières).
-* **Dates (`birthDate`, `draft_year`) :** Conversion des champs de texte en formats "Date" et "Nombre (entier)" pour permettre les calculs.
-* **Données manquantes :** Nettoyage des statistiques (ex: `career_FG3%`) qui contenaient des `"-"`. Une logique `IF-THEN-ELSE` a été utilisée pour les convertir en `NULL` et transformer la colonne en type `FLOAT` (nombre décimal).
-* **Création de variable :** Création de la variable `Âge au Draft` via la formule `[draft_year] - YEAR([birthDate])` pour une analyse contextuelle.
-
-### 3.2. Analyse Exploratoire (EDA)
-
-Pour valider la qualité des données nettoyées, un **histogramme** de la `Taille (cm)` a été créé. Celui-ci a révélé une distribution normale (une "courbe en cloche"), confirmant l'absence d'anomalies ou d'outliers majeurs dans les données de taille.
-
-### 3.3. Analyse Principale (Modélisation)
-
-Pour répondre à l'objectif, la relation entre le rang de draft et la performance a été modélisée :
-
-1.  **Création d'un Nuage de Points :** La relation entre le `Draft Pick (Num)` (Axe X) et les `career_PTS` (Axe Y) a été visualisée.
-2.  **Désagrégation :** L'option "Agréger les mesures" a été désactivée pour que chaque point représente un joueur individuel, et non la somme de tous.
-3.  **Ajout d'une Ligne de Tendance (Régression Linéaire) :** Une ligne de tendance a été appliquée pour modéliser mathématiquement la relation.
+Dans un jeu de données logique, on s'attendrait à une corrélation négative forte (un choix n°1 devrait avoir plus de points qu'un choix n°30). Ce projet audite cette hypothèse.
 
 ---
 
-## 4. Résultats et Découverte Majeure
+## 🕵️ Méthodologie et Découvertes Clés
 
-L'analyse a révélé une découverte cruciale qui n'était pas apparente au premier abord.
+Mon analyse s'est déroulée en trois étapes critiques, menées entièrement dans Tableau Public.
 
-* **Analyse Initiale (1968-2018) :** L'analyse sur *l'ensemble* des données montrait une relation **statistiquement significative** (`P-valeur < 0.0001`) mais **extrêmement faible** (`R-carré = 0.009`). Le rang de draft n'expliquait que **0.9%** de la performance.
+### 1. Nettoyage de Données Complexes (Data Cleaning)
+Les données brutes étaient inutilisables. Une étape de préparation intensive a été nécessaire pour parser et convertir les données textuelles en mesures numériques exploitables via les **Champs Calculés** de Tableau :
 
-* **Hypothèse et Affinement :** L'hypothèse a été émise que les données d'avant 1985 "polluaient" le modèle. Un **filtre** a été appliqué pour n'analyser que les joueurs draftés **entre 1985 et 2018** (l'ère moderne).
+* **Taille (`height`) :** Conversion du format texte (ex: "6-10") en une valeur numérique en centimètres (via les fonctions `SPLIT` et `INT`).
+* **Poids (`weight`) :** Conversion du format texte (ex: "240lb") en valeur numérique (via la fonction `REPLACE`).
+* **Rang de Draft (`draft_pick`) :** Extraction du numéro de draft (ex: "25" depuis "25th overall") en utilisant la fonction `REGEXP_EXTRACT` (Expressions Régulières).
+* **Données manquantes :** Nettoyage des colonnes statistiques (ex: `career_FG3%`) qui contenaient des `"-"` non numériques (via une logique `IF-THEN-ELSE`).
 
-* **Résultat Final (1985-2018) :**
-    * **P-valeur :** `< 0.0001` (La relation est toujours statistiquement réelle).
-    * **R-carré :** `0.22` (La relation est **24 fois plus forte**).
+### 2. Analyse Initiale (Corrélation Faible - 1968-2018)
+Une première analyse de régression linéaire sur l'ensemble du jeu de données a révélé un paradoxe :
+
+* **P-valeur :** `< 0.0001` (La relation est **statistiquement significative** et n'est pas due au hasard).
+* **R-carré :** `0.009` (La relation est **extrêmement faible**).
+
+Cette première passe concluait que le rang de draft n'expliquait que **0.9%** des performances en carrière.
+
+### 3. Découverte par Affinement (Ère Moderne - 1985-2018)
+L'hypothèse a été émise que les données anciennes (pré-1985, une ère très différente de la NBA) faussaient le modèle.
+
+En appliquant un **filtre** pour n'étudier que l'"ère moderne" (1985-2018), la véritable corrélation a été découverte :
+
+* **P-valeur :** `< 0.0001` (Toujours significative).
+* **R-carré :** `0.22` (La relation est **24 fois plus forte**).
 
 ---
 
-## 5. Conclusion
+## 🏁 Conclusion
 
-La conclusion de cette analyse est que le rang de draft est un **prédicteur de performance modérément fort dans la NBA moderne**.
+Ce projet n'est pas une simple analyse de corrélation, mais une démonstration de l'importance de **l'affinage et de la segmentation**.
 
-En filtrant les données pour se concentrer sur l'ère 1985-2018, nous avons démontré que le rang de draft **explique 22%** de la variation des points marqués en carrière.
+J'ai prouvé que le rang de draft **EST** un prédicteur de performance modérément fort, mais **uniquement si l'on se concentre sur l'ère moderne**, où il explique **22%** de la variation des points en carrière.
 
-Cette analyse prouve l'importance de ne pas se fier à une première analyse globale et de savoir **segmenter et filtrer les données** pour découvrir des tendances contextuelles plus profondes et plus précises.
+Ce projet démontre ma capacité à ne pas m'arrêter à un premier résultat, à remettre en question les données et à utiliser les outils d'analyse pour trouver la véritable histoire cachée.
+
+---
+
+## 🚀 Comment l'exécuter
+
+Ce projet est un dashboard interactif conçu pour être visualisé en ligne.
+
+**Fichiers dans ce dépôt :**
+* `players.csv` : Le jeu de données brutes utilisé pour l'analyse.
+* `README.md` : Cette documentation.
+
+**Visualisation :**
+Le dashboard final, qui inclut l'histogramme des tailles et le nuage de points filtré, est publié sur Tableau Public.
+
+### [➡️ Voir le Dashboard Interactif en Ligne]([COLLEZ VOTRE LIEN TABLEAU PUBLIC ICI])
