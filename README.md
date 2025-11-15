@@ -67,4 +67,3 @@ Ce projet est un dashboard interactif conçu pour être visualisé en ligne.
 **Visualisation :**
 Le dashboard final, qui inclut l'histogramme des tailles et le nuage de points filtré, est publié sur Tableau Public.
 
-### [➡️ Voir le Dashboard Interactif en Ligne]([COLLEZ VOTRE LIEN TABLEAU PUBLIC ICI])
